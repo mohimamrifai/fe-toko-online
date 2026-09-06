@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Menu, Search, ShoppingBag, Heart, User } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,27 +13,22 @@ import {
   SheetHeader,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import TopBanner from "./top-banner";
 import BrandLogo from "../commons/brand-logo";
+import SearchMobile from "../commons/search-mobile";
+import WishlistButton from "../commons/wishlist-button";
+import ShoppingCart from "../commons/shopping-cart";
+import UserAccountMenu from "../commons/user-account-menu";
 
 const navLinks = [
   { label: "Home", href: "/" },
-  { label: "Shop All", href: "/shop" },
-  { label: "New Arrivals", href: "/new" },
   { label: "Categories", href: "/categories" },
+  { label: "Brands", href: "/brands" },
+  { label: "Promos", href: "/promotions" },
 ];
 
 export function Header() {
   const [isOpen, setIsOpen] = React.useState(false);
-  const cartItemCount = 3; // Example dynamic count
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -103,38 +98,13 @@ export function Header() {
         {/* User Utility Actions */}
         <div className="flex items-center gap-1 sm:gap-2">
           {/* Search trigger for mobile view only */}
-          <Button variant="ghost" size="icon" className="sm:hidden">
-            <Search className="h-5 w-5" />
-          </Button>
+          <SearchMobile />
 
           {/* Wishlist */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="hidden xs:flex"
-            nativeButton={false}
-            render={<Link href="/wishlist" />}
-          >
-            <Heart className="h-5 w-5" />
-            <span className="sr-only">Wishlist</span>
-          </Button>
+          <WishlistButton />
 
           {/* Shopping Cart */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="relative"
-            nativeButton={false}
-            render={<Link href="/cart" />}
-          >
-            <ShoppingBag className="h-5 w-5" />
-            {cartItemCount > 0 && (
-              <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center">
-                {cartItemCount}
-              </span>
-            )}
-            <span className="sr-only">Cart</span>
-          </Button>
+          <ShoppingCart />
 
           <Separator
             orientation="vertical"
@@ -142,33 +112,7 @@ export function Header() {
           />
 
           {/* User Profile Dropdown jika sudah login */}
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button variant="ghost" size="icon" className="rounded-full" />
-              }
-            >
-              <User className="h-5 w-5" />
-              <span className="sr-only">User account</span>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem render={<Link href="/profile" />}>
-                Profile
-              </DropdownMenuItem>
-              <DropdownMenuItem render={<Link href="/orders" />}>
-                Orders
-              </DropdownMenuItem>
-              <DropdownMenuItem render={<Link href="/settings" />}>
-                Settings
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-destructive focus:text-destructive">
-                Log out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <UserAccountMenu />
         </div>
       </div>
     </header>
