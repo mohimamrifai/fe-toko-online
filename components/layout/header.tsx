@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Menu, Search, ShoppingBag, Heart, User, X } from "lucide-react";
+import { Menu, Search, ShoppingBag, Heart, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,6 @@ import {
   Sheet,
   SheetContent,
   SheetHeader,
-  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import {
@@ -22,6 +21,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import TopBanner from "./top-banner";
+import BrandLogo from "../commons/brand-logo";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -30,33 +31,35 @@ const navLinks = [
   { label: "Categories", href: "/categories" },
 ];
 
-export function Navbar() {
+export function Header() {
   const [isOpen, setIsOpen] = React.useState(false);
   const cartItemCount = 3; // Example dynamic count
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       {/* Top Banner (Optional for promos) */}
-      <div className="bg-primary text-primary-foreground text-center py-1.5 text-xs font-medium tracking-wide">
-        🎉 Free shipping on orders over $50!
-      </div>
+      <TopBanner />
 
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-2">
         {/* Mobile Menu Trigger */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetTrigger>
-            <Button variant="ghost" size="icon" className="md:hidden shrink-0">
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle navigation menu</span>
-            </Button>
+          <SheetTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden shrink-0"
+              />
+            }
+          >
+            <Menu className="h-5 w-5" />
+            <span className="sr-only">Toggle navigation menu</span>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+          <SheetContent side="left" className="w-75 sm:w-100">
             <SheetHeader className="text-left pb-4 border-b">
-              <SheetTitle className="font-bold text-xl tracking-tight">
-                StoreLogo
-              </SheetTitle>
+              <BrandLogo />
             </SheetHeader>
-            <nav className="flex flex-col gap-4 mt-6">
+            <nav className="flex flex-col gap-3 mt-2 px-4">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
@@ -72,9 +75,7 @@ export function Navbar() {
         </Sheet>
 
         {/* Brand Logo */}
-        <Link href="/" className="font-bold text-xl tracking-tight shrink-0">
-          StoreLogo
-        </Link>
+        <BrandLogo />
 
         {/* Desktop Navigation Links */}
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
@@ -82,7 +83,7 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="transition-colors hover:text-primary text-muted-foreground hover:text-foreground"
+              className="transition-colors text-muted-foreground hover:text-foreground"
             >
               {link.label}
             </Link>
@@ -107,24 +108,32 @@ export function Navbar() {
           </Button>
 
           {/* Wishlist */}
-          <Button variant="ghost" size="icon" className="hidden xs:flex">
-            <Link href="/wishlist">
-              <Heart className="h-5 w-5" />
-              <span className="sr-only">Wishlist</span>
-            </Link>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="hidden xs:flex"
+            nativeButton={false}
+            render={<Link href="/wishlist" />}
+          >
+            <Heart className="h-5 w-5" />
+            <span className="sr-only">Wishlist</span>
           </Button>
 
           {/* Shopping Cart */}
-          <Button variant="ghost" size="icon" className="relative">
-            <Link href="/cart">
-              <ShoppingBag className="h-5 w-5" />
-              {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center">
-                  {cartItemCount}
-                </span>
-              )}
-              <span className="sr-only">Cart</span>
-            </Link>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative"
+            nativeButton={false}
+            render={<Link href="/cart" />}
+          >
+            <ShoppingBag className="h-5 w-5" />
+            {cartItemCount > 0 && (
+              <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center">
+                {cartItemCount}
+              </span>
+            )}
+            <span className="sr-only">Cart</span>
           </Button>
 
           <Separator
@@ -132,25 +141,27 @@ export function Navbar() {
             className="h-6 mx-1 hidden sm:block"
           />
 
-          {/* User Profile Dropdown */}
+          {/* User Profile Dropdown jika sudah login */}
           <DropdownMenu>
-            <DropdownMenuTrigger>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <User className="h-5 w-5" />
-                <span className="sr-only">User account</span>
-              </Button>
+            <DropdownMenuTrigger
+              render={
+                <Button variant="ghost" size="icon" className="rounded-full" />
+              }
+            >
+              <User className="h-5 w-5" />
+              <span className="sr-only">User account</span>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link href="/profile">Profile</Link>
+              <DropdownMenuItem render={<Link href="/profile" />}>
+                Profile
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link href="/orders">Orders</Link>
+              <DropdownMenuItem render={<Link href="/orders" />}>
+                Orders
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link href="/settings">Settings</Link>
+              <DropdownMenuItem render={<Link href="/settings" />}>
+                Settings
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="text-destructive focus:text-destructive">
