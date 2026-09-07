@@ -82,7 +82,7 @@ export function PromoSlider() {
             <CarouselItem key={slide.id}>
               <Link
                 href={slide.href}
-                className="relative block aspect-video w-full max-h-[220px] overflow-hidden rounded-2xl sm:aspect-21/9 sm:max-h-[420px]"
+                className="relative block aspect-video w-full max-h-55 overflow-hidden rounded-2xl sm:aspect-21/9 sm:max-h-105"
               >
                 <Image
                   src={slide.image}
