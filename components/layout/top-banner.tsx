@@ -1,7 +1,14 @@
-export default function TopBanner() {
-  return (
-    <div className="bg-primary text-primary-foreground text-center py-1.5 text-xs font-medium tracking-wide">
-      🎉 Free shipping on orders over $50!
-    </div>
-  );
+import { getTopBanners } from "@/lib/api/top-banner";
+
+import { TopBannerContent } from "./top-banner-content";
+
+export default async function TopBanner() {
+  const banners = await getTopBanners();
+  const banner = banners[0];
+
+  if (!banner) {
+    return null;
+  }
+
+  return <TopBannerContent banner={banner} />;
 }
