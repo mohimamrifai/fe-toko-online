@@ -95,12 +95,6 @@ export function HeaderContent() {
         <SearchMobile />
         <WishlistButton />
         <ShoppingCart />
-
-        <Separator
-          orientation="vertical"
-          className="h-6 mx-1 hidden sm:block"
-        />
-
         <UserAccountMenu />
       </div>
     </div>
