@@ -12,3 +12,10 @@ export async function getCategories(): Promise<Category[]> {
     return [];
   }
 }
+
+export async function getCategoryBySlug(
+  slug: string,
+): Promise<Category | null> {
+  const categories = await getCategories();
+  return categories.find((category) => category.slug === slug) ?? null;
+}

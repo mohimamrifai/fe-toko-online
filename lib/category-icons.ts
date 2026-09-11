@@ -1,3 +1,4 @@
+import { createElement } from "react";
 import {
   Camera,
   Fan,
@@ -32,4 +33,15 @@ export function getCategoryIcon(icon: string | null): LucideIcon {
   }
 
   return categoryIconMap[icon] ?? Package;
+}
+
+type CategoryIconProps = {
+  icon: string | null;
+  className?: string;
+};
+
+export function CategoryIcon({ icon, className }: CategoryIconProps) {
+  const IconComponent = getCategoryIcon(icon);
+
+  return createElement(IconComponent, { className });
 }
