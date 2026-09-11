@@ -1,7 +1,10 @@
+"use client";
+
 import { Search } from "lucide-react";
+
+import { ProductSearchForm } from "@/components/commons/product-search-form";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Input } from "../ui/input";
 
 export default function SearchMobile() {
   return (
@@ -13,8 +16,11 @@ export default function SearchMobile() {
           </Button>
         }
       />
-      <PopoverContent className="sm:hidden">
-        <Input type="text" placeholder="Search..." />
+      <PopoverContent className="sm:hidden w-80">
+        <ProductSearchForm
+          placeholder="Cari produk..."
+          inputClassName="pl-8 w-full"
+        />
       </PopoverContent>
     </Popover>
   );

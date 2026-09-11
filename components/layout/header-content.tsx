@@ -2,11 +2,10 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Menu, Search } from "lucide-react";
+import { Menu } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
+import { ProductSearchForm } from "@/components/commons/product-search-form";
 import {
   Sheet,
   SheetContent,
@@ -80,15 +79,7 @@ export function HeaderContent() {
         ))}
       </nav>
 
-      {/* Search Bar (Desktop center/right) */}
-      <div className="hidden sm:flex relative max-w-md w-full mx-4">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder="Search products..."
-          className="pl-8 w-full bg-muted/50 focus-visible:bg-background"
-        />
-      </div>
+      <ProductSearchForm className="hidden sm:flex relative max-w-md w-full mx-4" />
 
       {/* User Utility Actions */}
       <div className="flex items-center gap-1 sm:gap-2">

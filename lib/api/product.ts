@@ -14,6 +14,7 @@ export interface GetProductsOptions {
   limit?: number;
   category?: string;
   brand?: string;
+  search?: string;
   sort?: ProductSort;
 }
 
@@ -36,6 +37,10 @@ export async function getProducts(
 
   if (options.brand) {
     searchParams.set("brand", options.brand);
+  }
+
+  if (options.search) {
+    searchParams.set("search", options.search);
   }
 
   if (options.sort) {
