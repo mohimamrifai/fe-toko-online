@@ -13,10 +13,10 @@ export default function Home() {
       <PromoSlider />
       <CategoryShortcuts />
       <FlashSale />
-      <ProductGrid title="Terlaris" />
+      <ProductGrid title="Terlaris" sort="terlaris" />
       <PromoBanner />
-      <ProductGrid title="Terbaru" />
-      <ProductGrid title="Rekomendasi untukmu" />
+      <ProductGrid title="Terbaru" sort="terbaru" />
+      <ProductGrid title="Rekomendasi untukmu" sort="terbaru" page={2} />
       <Footer />
     </main>
   );
