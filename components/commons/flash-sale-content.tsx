@@ -40,14 +40,13 @@ function padTime(value: number) {
 }
 
 function useCountdown(endsAt: string) {
-  const [countdown, setCountdown] = useState<CountdownState>(() =>
-    calculateCountdown(endsAt),
-  );
+  const [countdown, setCountdown] = useState<CountdownState | null>(null);
 
   useEffect(() => {
-    const timer = window.setInterval(() => {
-      setCountdown(calculateCountdown(endsAt));
-    }, 1000);
+    const update = () => setCountdown(calculateCountdown(endsAt));
+
+    update();
+    const timer = window.setInterval(update, 1000);
 
     return () => {
       window.clearInterval(timer);
@@ -55,6 +54,14 @@ function useCountdown(endsAt: string) {
   }, [endsAt]);
 
   return countdown;
+}
+
+function formatCountdownPart(value: number | null) {
+  if (value === null) {
+    return "--";
+  }
+
+  return padTime(value);
 }
 
 type FlashSaleContentProps = {
@@ -75,15 +82,15 @@ export function FlashSaleContent({ flashSale }: FlashSaleContentProps) {
 
           <div className="flex items-center gap-1 text-xs font-semibold text-white sm:text-sm">
             <span className="flex h-6 w-6 items-center justify-center rounded bg-red-600 sm:h-7 sm:w-7">
-              {padTime(countdown.hours)}
+              {formatCountdownPart(countdown?.hours ?? null)}
             </span>
             <span className="font-bold text-red-600">:</span>
             <span className="flex h-6 w-6 items-center justify-center rounded bg-red-600 sm:h-7 sm:w-7">
-              {padTime(countdown.minutes)}
+              {formatCountdownPart(countdown?.minutes ?? null)}
             </span>
             <span className="font-bold text-red-600">:</span>
             <span className="flex h-6 w-6 items-center justify-center rounded bg-red-600 sm:h-7 sm:w-7">
-              {padTime(countdown.seconds)}
+              {formatCountdownPart(countdown?.seconds ?? null)}
             </span>
           </div>
         </div>
