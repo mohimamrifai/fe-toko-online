@@ -26,7 +26,11 @@ export function CartPageContent() {
           Keranjang Anda masih kosong. Yuk, mulai belanja produk elektronik
           favorit.
         </p>
-        <Button render={<Link href="/" />} className="mt-6">
+        <Button
+          nativeButton={false}
+          render={<Link href="/" />}
+          className="mt-6"
+        >
           Lanjut Belanja
         </Button>
       </section>
@@ -155,6 +159,7 @@ export function CartPageContent() {
           </div>
 
           <Button
+            nativeButton={false}
             render={<Link href={checkoutHref} />}
             className="mt-6 w-full"
             size="lg"
