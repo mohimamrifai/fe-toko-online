@@ -6,6 +6,7 @@ import type {
 } from "@/types/promo-slider";
 
 const DEFAULT_CTA_LABEL = "Belanja Sekarang";
+export const MAX_PROMO_SLIDES = 5;
 
 export async function getPromoSliders(): Promise<PromoSlider[]> {
   try {
@@ -13,7 +14,7 @@ export async function getPromoSliders(): Promise<PromoSlider[]> {
       revalidate: 60,
     });
 
-    return response.data;
+    return response.data.slice(0, MAX_PROMO_SLIDES);
   } catch {
     return [];
   }
