@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { AuthProvider } from "@/components/providers/auth-provider";
+import { CartProvider } from "@/components/providers/cart-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toast";
 
@@ -25,7 +26,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <AuthProvider>
-          <TooltipProvider>{children}</TooltipProvider>
+          <CartProvider>
+            <TooltipProvider>{children}</TooltipProvider>
+          </CartProvider>
         </AuthProvider>
         <Toaster />
       </body>

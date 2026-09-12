@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Heart, ShoppingBag, Star } from "lucide-react";
 
+import { useCart } from "@/components/providers/cart-provider";
 import { Button } from "@/components/ui/button";
 import { formatRupiah } from "@/lib/format-rupiah";
 import type { ProductDetail } from "@/types/product";
@@ -18,6 +19,9 @@ type ProductDetailContentProps = {
 };
 
 export function ProductDetailContent({ product }: ProductDetailContentProps) {
+  const { addItem } = useCart();
+  const [cartMessage, setCartMessage] = useState<string | null>(null);
+
   const galleryImages = useMemo(() => {
     if (product.images.length > 0) {
       return product.images;
@@ -52,6 +56,30 @@ export function ProductDetailContent({ product }: ProductDetailContentProps) {
   const displayStock = selectedVariant?.stock ?? product.stock;
   const displaySku = selectedVariant?.sku ?? product.sku;
   const selectedImage = galleryImages[selectedImageIndex] ?? galleryImages[0];
+
+  function handleAddToCart() {
+    if (displayStock <= 0) {
+      return;
+    }
+
+    if (product.variants.length > 0 && !selectedVariantId) {
+      setCartMessage("Pilih varian produk terlebih dahulu.");
+      return;
+    }
+
+    addItem({
+      productId: product.id,
+      variantId: selectedVariant?.id,
+      slug: product.slug,
+      name: product.name,
+      image: selectedImage.imageUrl,
+      price: displayPrice,
+      maxStock: displayStock,
+      variantName: selectedVariant?.variantName,
+    });
+
+    setCartMessage("Produk berhasil ditambahkan ke keranjang.");
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 md:px-8 md:py-10">
@@ -225,7 +253,7 @@ export function ProductDetailContent({ product }: ProductDetailContentProps) {
               size="lg"
               className="flex-1"
               disabled={displayStock <= 0}
-              onClick={() => undefined}
+              onClick={handleAddToCart}
             >
               <ShoppingBag className="h-4 w-4" />
               Tambah ke Keranjang
@@ -240,6 +268,10 @@ export function ProductDetailContent({ product }: ProductDetailContentProps) {
               Wishlist
             </Button>
           </div>
+
+          {cartMessage ? (
+            <p className="text-sm text-primary" role="status">{cartMessage}</p>
+          ) : null}
 
           {product.description && (
             <div className="space-y-2">

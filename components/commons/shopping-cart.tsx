@@ -1,9 +1,14 @@
+"use client";
+
 import Link from "next/link";
-import { Button } from "../ui/button";
 import { ShoppingBag } from "lucide-react";
 
+import { useCart } from "@/components/providers/cart-provider";
+import { Button } from "../ui/button";
+
 export default function ShoppingCart() {
-  const cartItemCount = 3; // Example dynamic count
+  const { itemCount, isHydrated } = useCart();
+  const displayCount = isHydrated ? itemCount : 0;
 
   return (
     <Button
@@ -14,9 +19,9 @@ export default function ShoppingCart() {
       render={<Link href="/cart" />}
     >
       <ShoppingBag className="h-5 w-5" />
-      {cartItemCount > 0 && (
-        <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center">
-          {cartItemCount}
+      {displayCount > 0 && (
+        <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
+          {displayCount > 99 ? "99+" : displayCount}
         </span>
       )}
       <span className="sr-only">Cart</span>
