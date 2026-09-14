@@ -4,11 +4,12 @@ import type {
   LoginPayload,
   MeResponse,
   RegisterPayload,
+  UpdateProfilePayload,
 } from "@/types/auth";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-function getAuthHeaders(): HeadersInit {
+export function getAuthHeaders(): HeadersInit {
   const token = getAccessToken();
 
   return {
@@ -86,6 +87,25 @@ export async function getCurrentUser() {
   if (res.status === 401) {
     return null;
   }
+
+  if (!res.ok) {
+    throw new Error(await parseErrorMessage(res));
+  }
+
+  const response = (await res.json()) as MeResponse;
+  return response.data;
+}
+
+export async function updateProfile(payload: UpdateProfilePayload) {
+  if (!API_BASE_URL) {
+    throw new Error("NEXT_PUBLIC_API_BASE_URL belum di-set");
+  }
+
+  const res = await fetch(`${API_BASE_URL}/auth/me`, {
+    method: "PATCH",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(payload),
+  });
 
   if (!res.ok) {
     throw new Error(await parseErrorMessage(res));
