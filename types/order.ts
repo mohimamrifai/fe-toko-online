@@ -52,3 +52,14 @@ export interface CheckoutPayload {
 export interface OrderResponse {
   data: OrderDetail;
 }
+
+export interface PayOrderResponse {
+  snapToken: string;
+  redirectUrl: string;
+  clientKey: string;
+  midtransOrderId: string;
+}
+
+export interface PayOrderApiResponse {
+  data: PayOrderResponse;
+}

@@ -131,6 +131,15 @@ export function OrderConfirmationContent() {
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
+            {order.status === "pending" ? (
+              <Button
+                nativeButton={false}
+                render={<Link href={`/orders/${order.id}/pay`} />}
+                className="flex-1"
+              >
+                Bayar Sekarang
+              </Button>
+            ) : null}
             <Button
               nativeButton={false}
               render={<Link href="/" />}
@@ -138,13 +147,6 @@ export function OrderConfirmationContent() {
               className="flex-1"
             >
               Lanjut Belanja
-            </Button>
-            <Button
-              nativeButton={false}
-              render={<Link href="/cart" />}
-              className="flex-1"
-            >
-              Kembali ke Keranjang
             </Button>
           </div>
         </CardContent>

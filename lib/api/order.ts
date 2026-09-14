@@ -1,5 +1,9 @@
 import { getAuthHeaders } from "@/lib/api/auth";
-import type { CheckoutPayload, OrderResponse } from "@/types/order";
+import type {
+  CheckoutPayload,
+  OrderResponse,
+  PayOrderApiResponse,
+} from "@/types/order";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -47,5 +51,19 @@ export async function getOrder(id: string) {
   }
 
   const response = (await res.json()) as OrderResponse;
+  return response.data;
+}
+
+export async function payOrder(id: string) {
+  const res = await fetch(`${ensureApiBaseUrl()}/orders/${id}/pay`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+  });
+
+  if (!res.ok) {
+    throw new Error(await parseErrorMessage(res));
+  }
+
+  const response = (await res.json()) as PayOrderApiResponse;
   return response.data;
 }
