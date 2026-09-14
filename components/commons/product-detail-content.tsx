@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import { Heart, ShoppingBag, Star } from "lucide-react";
 
 import { useCart } from "@/components/providers/cart-provider";
+import { useWishlist } from "@/components/providers/wishlist-provider";
 import { Button } from "@/components/ui/button";
 import { formatRupiah } from "@/lib/format-rupiah";
 import type { ProductDetail } from "@/types/product";
@@ -20,7 +21,9 @@ type ProductDetailContentProps = {
 
 export function ProductDetailContent({ product }: ProductDetailContentProps) {
   const { addItem } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
   const [cartMessage, setCartMessage] = useState<string | null>(null);
+  const isWishlisted = isInWishlist(product.id);
 
   const galleryImages = useMemo(() => {
     if (product.images.length > 0) {
@@ -261,11 +264,13 @@ export function ProductDetailContent({ product }: ProductDetailContentProps) {
             <Button
               type="button"
               size="lg"
-              variant="outline"
-              onClick={() => undefined}
+              variant={isWishlisted ? "default" : "outline"}
+              onClick={() => void toggleWishlist(product.id)}
             >
-              <Heart className="h-4 w-4" />
-              Wishlist
+              <Heart
+                className={cn("h-4 w-4", isWishlisted && "fill-current")}
+              />
+              {isWishlisted ? "Di Wishlist" : "Wishlist"}
             </Button>
           </div>
 
