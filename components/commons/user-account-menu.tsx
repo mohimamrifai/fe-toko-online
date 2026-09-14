@@ -8,6 +8,7 @@ import {
   MapPin,
   Settings,
   HelpCircle,
+  ShieldAlert,
   LogOut,
   LogIn,
   UserPlus,
@@ -103,6 +104,10 @@ export default function UserAccountMenu() {
           <DropdownMenuItem render={<Link href="/address" />}>
             <MapPin className="mr-2 h-4 w-4" />
             Alamat Pengiriman
+          </DropdownMenuItem>
+          <DropdownMenuItem render={<Link href="/claims" />}>
+            <ShieldAlert className="mr-2 h-4 w-4" />
+            Klaim Garansi/Retur
           </DropdownMenuItem>
         </DropdownMenuGroup>
 

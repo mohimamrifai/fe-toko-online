@@ -3,8 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { CreateClaimDialog } from "@/components/claims/create-claim-dialog";
 import { OrderStatusBadge } from "@/components/orders/order-status-badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,10 +16,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
+import { getClaims } from "@/lib/api/claim";
 import { getOrder } from "@/lib/api/order";
 import { formatOrderDate } from "@/lib/format-date";
 import { formatRupiah } from "@/lib/format-rupiah";
-import type { OrderDetail } from "@/types/order";
+import type { Claim } from "@/types/claim";
+import type { OrderDetail, OrderItem } from "@/types/order";
 
 const PLACEHOLDER_IMAGE =
   "https://placehold.co/600x600/png?text=Produk+Elektronik";
@@ -26,8 +29,23 @@ const PLACEHOLDER_IMAGE =
 export function OrderDetailContent() {
   const params = useParams<{ id: string }>();
   const [order, setOrder] = useState<OrderDetail | null>(null);
+  const [claims, setClaims] = useState<Claim[]>([]);
+  const [selectedClaimItem, setSelectedClaimItem] = useState<OrderItem | null>(
+    null,
+  );
+  const [isClaimDialogOpen, setIsClaimDialogOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const activeClaimItemIds = useMemo(() => {
+    const activeStatuses = new Set(["submitted", "reviewing", "approved"]);
+
+    return new Set(
+      claims
+        .filter((claim) => activeStatuses.has(claim.status))
+        .map((claim) => claim.orderItemId),
+    );
+  }, [claims]);
 
   const loadOrder = useCallback(async () => {
     if (!params.id) {
@@ -37,8 +55,12 @@ export function OrderDetailContent() {
     setError(null);
 
     try {
-      const data = await getOrder(params.id);
-      setOrder(data);
+      const [orderData, claimData] = await Promise.all([
+        getOrder(params.id),
+        getClaims(params.id).catch(() => [] as Claim[]),
+      ]);
+      setOrder(orderData);
+      setClaims(claimData);
     } catch (loadError) {
       setError(
         loadError instanceof Error
@@ -49,6 +71,11 @@ export function OrderDetailContent() {
       setIsLoading(false);
     }
   }, [params.id]);
+
+  function openClaimDialog(item: OrderItem) {
+    setSelectedClaimItem(item);
+    setIsClaimDialogOpen(true);
+  }
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- initial order fetch
@@ -147,6 +174,20 @@ export function OrderDetailContent() {
                     <p className="mt-2 text-sm text-muted-foreground">
                       {item.quantity} x {formatRupiah(item.price)}
                     </p>
+                    {order.status !== "pending" && order.status !== "cancelled" ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="mt-3"
+                        disabled={activeClaimItemIds.has(item.id)}
+                        onClick={() => openClaimDialog(item)}
+                      >
+                        {activeClaimItemIds.has(item.id)
+                          ? "Klaim Diproses"
+                          : "Ajukan Klaim"}
+                      </Button>
+                    ) : null}
                   </div>
                   <p className="text-sm font-semibold text-foreground">
                     {formatRupiah(item.price * item.quantity)}
@@ -259,6 +300,18 @@ export function OrderDetailContent() {
           </Button>
         </aside>
       </div>
+
+      {selectedClaimItem && order ? (
+        <CreateClaimDialog
+          open={isClaimDialogOpen}
+          onOpenChange={setIsClaimDialogOpen}
+          orderId={order.id}
+          orderStatus={order.status}
+          item={selectedClaimItem}
+          hasActiveClaim={activeClaimItemIds.has(selectedClaimItem.id)}
+          onSuccess={() => void loadOrder()}
+        />
+      ) : null}
     </section>
   );
 }
