@@ -20,6 +20,7 @@ export interface ProductListItem {
   price: number;
   originalPrice: number | null;
   rating: number;
+  reviewCount: number;
   soldCount: number;
   category: ProductCategory;
   brand: ProductBrand;
@@ -77,6 +78,7 @@ export interface ProductDetail {
   sku: string;
   warrantyMonths: number | null;
   rating: number;
+  reviewCount: number;
   soldCount: number;
   category: ProductCategory;
   brand: ProductBrandDetail;

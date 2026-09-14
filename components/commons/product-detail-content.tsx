@@ -7,6 +7,7 @@ import { Heart, ShoppingBag, Star } from "lucide-react";
 
 import { useCart } from "@/components/providers/cart-provider";
 import { useWishlist } from "@/components/providers/wishlist-provider";
+import { ProductReviewsSection } from "@/components/product/product-reviews-section";
 import { Button } from "@/components/ui/button";
 import { formatRupiah } from "@/lib/format-rupiah";
 import type { ProductDetail } from "@/types/product";
@@ -174,9 +175,10 @@ export function ProductDetailContent({ product }: ProductDetailContentProps) {
               <div className="flex items-center gap-1">
                 <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
                 <span className="font-medium text-foreground">
-                  {product.rating}
+                  {product.rating.toFixed(1)}
                 </span>
               </div>
+              <span>{product.reviewCount} ulasan</span>
               <span>Terjual {product.soldCount}+</span>
               <span>SKU: {displaySku}</span>
             </div>
@@ -314,6 +316,13 @@ export function ProductDetailContent({ product }: ProductDetailContentProps) {
           </div>
         </section>
       )}
+
+      <ProductReviewsSection
+        productId={product.id}
+        productSlug={product.slug}
+        initialRating={product.rating}
+        initialReviewCount={product.reviewCount}
+      />
     </div>
   );
 }
