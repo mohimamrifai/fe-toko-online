@@ -27,7 +27,12 @@ export interface OrderStatusHistoryItem {
   createdAt: string;
 }
 
-export interface OrderDetail {
+export interface OrderPreviewItem {
+  productName: string;
+  image: string | null;
+}
+
+export interface OrderSummary {
   id: string;
   orderNumber: string;
   status: OrderStatus;
@@ -40,6 +45,10 @@ export interface OrderDetail {
   createdAt: string;
   itemCount: number;
   items: OrderItem[];
+  previewItem: OrderPreviewItem | null;
+}
+
+export interface OrderDetail extends OrderSummary {
   shippingAddress: Address;
   statusHistory: OrderStatusHistoryItem[];
 }
@@ -51,6 +60,10 @@ export interface CheckoutPayload {
 
 export interface OrderResponse {
   data: OrderDetail;
+}
+
+export interface OrderListResponse {
+  data: OrderSummary[];
 }
 
 export interface PayOrderResponse {

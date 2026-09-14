@@ -1,6 +1,7 @@
 import { getAuthHeaders } from "@/lib/api/auth";
 import type {
   CheckoutPayload,
+  OrderListResponse,
   OrderResponse,
   PayOrderApiResponse,
 } from "@/types/order";
@@ -37,6 +38,20 @@ export async function checkoutOrder(payload: CheckoutPayload) {
   }
 
   const response = (await res.json()) as OrderResponse;
+  return response.data;
+}
+
+export async function getOrders() {
+  const res = await fetch(`${ensureApiBaseUrl()}/orders`, {
+    headers: getAuthHeaders(),
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error(await parseErrorMessage(res));
+  }
+
+  const response = (await res.json()) as OrderListResponse;
   return response.data;
 }
 
