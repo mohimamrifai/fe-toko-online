@@ -35,3 +35,18 @@ export interface UpdateProfilePayload {
   name?: string;
   phone?: string;
 }
+
+export interface ForgotPasswordPayload {
+  email: string;
+}
+
+export interface ResetPasswordPayload {
+  token: string;
+  password: string;
+}
+
+export interface MessageResponse {
+  data: {
+    message: string;
+  };
+}

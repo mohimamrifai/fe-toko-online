@@ -1,10 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { useAuth } from "@/components/providers/auth-provider";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,29 +13,29 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { requestPasswordReset } from "@/lib/api/auth";
 
-export function LoginForm() {
-  const router = useRouter();
-  const { login } = useAuth();
+export function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+    setSuccessMessage(null);
     setIsSubmitting(true);
 
     try {
-      await login({ email, password });
-      router.push("/");
-      router.refresh();
+      const response = await requestPasswordReset({ email });
+      setSuccessMessage(response.message);
+      setEmail("");
     } catch (submitError) {
       setError(
         submitError instanceof Error
           ? submitError.message
-          : "Login gagal. Silakan coba lagi.",
+          : "Gagal mengirim permintaan reset password.",
       );
     } finally {
       setIsSubmitting(false);
@@ -47,9 +45,9 @@ export function LoginForm() {
   return (
     <Card className="mx-auto w-full max-w-md">
       <CardHeader>
-        <CardTitle>Masuk ke Akun</CardTitle>
+        <CardTitle>Lupa Password</CardTitle>
         <CardDescription>
-          Masukkan email dan password untuk melanjutkan belanja.
+          Masukkan email akun Anda. Kami akan mengirim tautan reset password.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -67,40 +65,25 @@ export function LoginForm() {
             />
           </div>
 
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password">Password</Label>
-              <Link
-                href="/forgot-password"
-                className="text-xs font-medium text-primary hover:underline"
-              >
-                Lupa password?
-              </Link>
-            </div>
-            <Input
-              id="password"
-              type="password"
-              autoComplete="current-password"
-              placeholder="Masukkan password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              required
-            />
-          </div>
-
           {error ? (
             <p className="text-sm text-destructive" role="alert">{error}</p>
           ) : null}
 
+          {successMessage ? (
+            <p className="text-sm text-primary" role="status">
+              {successMessage}
+            </p>
+          ) : null}
+
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Memproses..." : "Masuk"}
+            {isSubmitting ? "Mengirim..." : "Kirim Tautan Reset"}
           </Button>
         </form>
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          Belum punya akun?{" "}
-          <Link href="/register" className="font-medium text-primary hover:underline">
-            Daftar sekarang
+          Ingat password Anda?{" "}
+          <Link href="/login" className="font-medium text-primary hover:underline">
+            Kembali ke login
           </Link>
         </p>
       </CardContent>

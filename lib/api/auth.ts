@@ -1,9 +1,12 @@
 import { getAccessToken } from "@/lib/auth-storage";
 import type {
   AuthResponse,
+  ForgotPasswordPayload,
   LoginPayload,
   MeResponse,
+  MessageResponse,
   RegisterPayload,
+  ResetPasswordPayload,
   UpdateProfilePayload,
 } from "@/types/auth";
 
@@ -93,6 +96,48 @@ export async function getCurrentUser() {
   }
 
   const response = (await res.json()) as MeResponse;
+  return response.data;
+}
+
+export async function requestPasswordReset(payload: ForgotPasswordPayload) {
+  if (!API_BASE_URL) {
+    throw new Error("NEXT_PUBLIC_API_BASE_URL belum di-set");
+  }
+
+  const res = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    throw new Error(await parseErrorMessage(res));
+  }
+
+  const response = (await res.json()) as MessageResponse;
+  return response.data;
+}
+
+export async function resetPassword(payload: ResetPasswordPayload) {
+  if (!API_BASE_URL) {
+    throw new Error("NEXT_PUBLIC_API_BASE_URL belum di-set");
+  }
+
+  const res = await fetch(`${API_BASE_URL}/auth/reset-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    throw new Error(await parseErrorMessage(res));
+  }
+
+  const response = (await res.json()) as MessageResponse;
   return response.data;
 }
 
