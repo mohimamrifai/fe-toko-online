@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { CreateClaimDialog } from "@/components/claims/create-claim-dialog";
 import { OrderStatusBadge } from "@/components/orders/order-status-badge";
+import { OrderStatusTimeline } from "@/components/orders/order-status-timeline";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -230,37 +231,7 @@ export function OrderDetailContent() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ol className="space-y-4">
-                {order.statusHistory.map((entry, index) => (
-                  <li key={entry.id} className="flex gap-3">
-                    <div className="flex flex-col items-center">
-                      <span
-                        className={`mt-1 size-2.5 rounded-full ${
-                          index === order.statusHistory.length - 1
-                            ? "bg-primary"
-                            : "bg-muted-foreground/40"
-                        }`}
-                      />
-                      {index < order.statusHistory.length - 1 ? (
-                        <span className="mt-1 h-full w-px bg-border" />
-                      ) : null}
-                    </div>
-                    <div className="pb-2">
-                      <p className="text-sm font-medium capitalize text-foreground">
-                        {entry.status}
-                      </p>
-                      {entry.note ? (
-                        <p className="mt-1 text-sm text-muted-foreground">
-                          {entry.note}
-                        </p>
-                      ) : null}
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {formatOrderDate(entry.createdAt)}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
+              <OrderStatusTimeline history={order.statusHistory} />
             </CardContent>
           </Card>
         </div>
