@@ -19,13 +19,17 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Spinner } from "@/components/ui/spinner";
 import { getAddresses } from "@/lib/api/address";
 import { checkoutOrder } from "@/lib/api/order";
+import { validatePromo } from "@/lib/api/promo";
 import { formatRupiah } from "@/lib/format-rupiah";
 import {
   getShippingCost,
   SHIPPING_OPTIONS,
   type ShippingCourier,
 } from "@/lib/shipping-options";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import type { Address } from "@/types/address";
+import type { ValidatePromoResult } from "@/types/promo";
 
 const PLACEHOLDER_IMAGE =
   "https://placehold.co/600x600/png?text=Produk+Elektronik";
@@ -39,6 +43,12 @@ export function CheckoutPageContent() {
     SHIPPING_OPTIONS[0].courier,
   );
   const [isLoadingAddresses, setIsLoadingAddresses] = useState(true);
+  const [promoCode, setPromoCode] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState<ValidatePromoResult | null>(
+    null,
+  );
+  const [promoError, setPromoError] = useState<string | null>(null);
+  const [isValidatingPromo, setIsValidatingPromo] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -80,7 +90,41 @@ export function CheckoutPageContent() {
     () => getShippingCost(selectedCourier),
     [selectedCourier],
   );
-  const total = subtotal + shippingCost;
+  const discountAmount = appliedPromo?.discountAmount ?? 0;
+  const total = subtotal + shippingCost - discountAmount;
+
+  async function handleApplyPromo() {
+    const trimmedCode = promoCode.trim();
+
+    if (!trimmedCode) {
+      setPromoError("Masukkan kode voucher terlebih dahulu.");
+      return;
+    }
+
+    setPromoError(null);
+    setIsValidatingPromo(true);
+
+    try {
+      const result = await validatePromo({ code: trimmedCode });
+      setAppliedPromo(result);
+      setPromoCode(result.code);
+    } catch (validateError) {
+      setAppliedPromo(null);
+      setPromoError(
+        validateError instanceof Error
+          ? validateError.message
+          : "Kode voucher tidak valid.",
+      );
+    } finally {
+      setIsValidatingPromo(false);
+    }
+  }
+
+  function handleRemovePromo() {
+    setAppliedPromo(null);
+    setPromoCode("");
+    setPromoError(null);
+  }
 
   async function handleCheckout() {
     if (!selectedAddressId) {
@@ -95,6 +139,7 @@ export function CheckoutPageContent() {
       const order = await checkoutOrder({
         shippingAddressId: selectedAddressId,
         courier: selectedCourier,
+        promoCode: appliedPromo?.code,
       });
 
       clearCart();
@@ -293,6 +338,54 @@ export function CheckoutPageContent() {
             Total Pembayaran
           </h2>
 
+          <div className="mt-4 space-y-3">
+            <Label htmlFor="promoCode">Kode Voucher</Label>
+            <div className="flex gap-2">
+              <Input
+                id="promoCode"
+                value={promoCode}
+                onChange={(event) => {
+                  setPromoCode(event.target.value.toUpperCase());
+                  if (appliedPromo) {
+                    setAppliedPromo(null);
+                  }
+                }}
+                placeholder="Masukkan kode"
+                disabled={Boolean(appliedPromo)}
+              />
+              {appliedPromo ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleRemovePromo}
+                >
+                  Hapus
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={isValidatingPromo}
+                  onClick={() => {
+                    void handleApplyPromo();
+                  }}
+                >
+                  {isValidatingPromo ? "..." : "Pakai"}
+                </Button>
+              )}
+            </div>
+            {appliedPromo ? (
+              <p className="text-xs text-emerald-600">
+                Voucher {appliedPromo.code} diterapkan ({appliedPromo.name})
+              </p>
+            ) : null}
+            {promoError ? (
+              <p className="text-xs text-destructive" role="alert">
+                {promoError}
+              </p>
+            ) : null}
+          </div>
+
           <div className="mt-4 space-y-3 text-sm">
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">Subtotal</span>
@@ -306,6 +399,14 @@ export function CheckoutPageContent() {
                 {formatRupiah(shippingCost)}
               </span>
             </div>
+            {discountAmount > 0 ? (
+              <div className="flex items-center justify-between text-emerald-600">
+                <span>Diskon Voucher</span>
+                <span className="font-medium">
+                  -{formatRupiah(discountAmount)}
+                </span>
+              </div>
+            ) : null}
             <div className="flex items-center justify-between border-t pt-3 text-base">
               <span className="font-semibold text-foreground">Total</span>
               <span className="font-bold text-foreground">

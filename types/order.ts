@@ -56,6 +56,7 @@ export interface OrderDetail extends OrderSummary {
 export interface CheckoutPayload {
   shippingAddressId: string;
   courier: string;
+  promoCode?: string;
 }
 
 export interface OrderResponse {
